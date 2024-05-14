@@ -1,152 +1,84 @@
-# Implementation-of-Logistic-Regression-Using-Gradient-Descent
+# Implementation-of-Decision-Tree-Classifier-Model-for-Predicting-Employee-Churn
 
 ## AIM:
-To write a program to implement the the Logistic Regression Using Gradient Descent.
+To write a program to implement the Decision Tree Classifier Model for Predicting Employee Churn.
 
 ## Equipments Required:
 1. Hardware – PCs
 2. Anaconda – Python 3.7 Installation / Jupyter notebook
 
 ## Algorithm
-1. Import the required libraries.
-2. Load the dataset.
-3. Define X and Y array.
-4. Define a function for costFunction,cost and gradient.
-5. Define a function to plot the decision boundary. 6.Define a function to predict the 
-   Regression value.
+1. Import the required libraries
+2. Upload and read the dataset.
+3. Check for any null values using the isnull() function.
+4. From sklearn.tree import DecisionTreeClassifier and use criterion as entropy.
+5. Find the accuracy of the model and predict the required values by importing the required module from sklearn.
 
 ## Program:
 ```
-Program to implement the the Logistic Regression Using Gradient Descent.
-Developed by: Kamalesh SV
-RegisterNumber: 212222240021 
-```
-```
-import numpy as np
-import matplotlib.pyplot as plt
-from scipy import optimize
-
-data=np.loadtxt("ex2data1.txt",delimiter=',')
-X=data[:,[0,1]]
-y=data[:,2]
-
-X[:5]
-
-y[:5]
-
-plt.figure()
-plt.scatter(X[y==1][:,0],X[y==1][:,1],label="Admitted")
-plt.scatter(X[y==0][:,0],X[y==0][:,1],label="Not Admitted")
-plt.xlabel("Exam 1 score")
-plt.ylabel("Exam 2 score")
-plt.legend()
-plt.show()
-
-def sigmoid(z):
-    return 1/(1+np.exp(-z))
-
-plt.plot()
-X_plot=np.linspace(-10,10,100)
-plt.plot(X_plot,sigmoid(X_plot))
-plt.show()
-
-def costFunction (theta,X,y):
-    h=sigmoid(np.dot(X,theta))
-    J=-(np.dot(y,np.log(h))+np.dot(1-y,np.log(1-h)))/X.shape[0]
-    grad=np.dot(X.T,h-y)/X.shape[0]
-    return J,grad
-
-X_train=np.hstack((np.ones((X.shape[0],1)),X))
-theta=np.array([0,0,0])
-J,grad=costFunction(theta,X_train,y)
-print(J)
-print(grad)
-
-X_train=np.hstack((np.ones((X.shape[0],1)),X))
-theta=np.array([-24,0.2,0.2])
-J,grad=costFunction(theta,X_train,y)
-print(J)
-print(grad)
-
-def cost (theta,X,y):
-    h=sigmoid(np.dot(X,theta))
-    J=-(np.dot(y,np.log(h))+np.dot(1-y,np.log(1-h)))/X.shape[0]
-    return J
-
-def gradient (theta,X,y):
-    h=sigmoid(np.dot(X,theta))
-    grad=np.dot(X.T,h-y)/X.shape[0]
-    return grad
-
-X_train=np.hstack((np.ones((X.shape[0],1)),X))
-theta=np.array([0,0,0])
-res=optimize.minimize(fun=cost,x0=theta,args=(X_train,y),method='Newton-CG',jac=gradient)
-print(res.fun)
-print(res.x)
-
-def plotDecisionBoundary(theta,X,y):
-    x_min,x_max=X[:,0].min()-1,X[:,0].max()+1
-    y_min,y_max=X[:,1].min()-1,X[:,1].max()+1
-    xx,yy=np.meshgrid(np.arange(x_min,x_max,0.1),np.arange(y_min,y_max,0.1))
-    X_plot=np.c_[xx.ravel(),yy.ravel()]
-    X_plot=np.hstack((np.ones((X_plot.shape[0],1)),X_plot))
-    y_plot=np.dot(X_plot,theta).reshape(xx.shape)
-    
-    plt.figure()
-    plt.scatter(X[y==1][:,0],X[y==1][:,1],label="Admitted")
-    plt.scatter(X[y==0][:,0],X[y==0][:,1],label="Not Admitted")
-    plt.contour(xx,yy,y_plot,levels=[0])
-    plt.xlabel("Exam 1 score")
-    plt.ylabel("Exam 2 score")
-    plt.legend()
-    plt.show()
-
-
-plotDecisionBoundary(res.x,X,y)
-
-prob=sigmoid(np.dot(np.array([1,45,85]),res.x))
-print(prob)
-
-def predict(theta,X):
-    X_train =np.hstack((np.ones((X.shape[0],1)),X))
-    prob=sigmoid(np.dot(X_train,theta))
-    return (prob>=0.5).astype(int)
-np.mean(predict(res.x,X)==y)
+/*
+Program to implement the Decision Tree Classifier Model for Predicting Employee Churn.
+Developed by: M GANESAN
+RegisterNumber:  212223080013
+*/
+import pandas as pd
+data=pd.read_csv("Employee.csv")
+data.head()
+data.info()
+data.isnull().sum()
+data["left"].value_counts()
+from sklearn.preprocessing import LabelEncoder
+le=LabelEncoder()
+data["salary"]=le.fit_transform(data["salary"])
+data.head()
+X=data[["satisfaction_level","last_evaluation","number_project","average_montly_hours","time_spend_company","Work_accident","promotion_last_5years","salary"]]
+X.head()
+Y=data["left"]
+from sklearn.model_selection import train_test_split
+X_train,X_test,Y_train,Y_test=train_test_split(X,Y,test_size=0.2,random_state=100)
+from sklearn.tree import DecisionTreeClassifier
+dt=DecisionTreeClassifier(criterion="entropy")
+dt.fit(X_train,Y_train)
+Y_pred=dt.predict(X_test)
+from sklearn import metrics
+accuracy=metrics.accuracy_score(Y_test,Y_pred)
+accuracy
+dt.predict([[0.5,0.8,9,260,6,0,1,2]])
 ```
 
 ## Output:
+data.head()
 
+![326901472-27b2bcb2-da89-4efb-bae4-b67be863b902](https://github.com/23014226/Implementation-of-Decision-Tree-Classifier-Model-for-Predicting-Employee-Churn/assets/160568974/40c9ba6f-cab8-4a83-8c21-df95adf230ee)
 
-### Array Value of x
-![output](https://user-images.githubusercontent.com/120204455/270424335-e5311ce6-a9ee-4086-b99f-f8c6b4491790.png)
+data.info()
 
-### Array Value of y
-![output](https://user-images.githubusercontent.com/120204455/270424349-462fb7c0-fff3-4b13-94d0-b6498c351f26.png)
+![326901658-75ba62cc-2dd6-4909-bafb-b3f4897f1f1c](https://github.com/23014226/Implementation-of-Decision-Tree-Classifier-Model-for-Predicting-Employee-Churn/assets/160568974/d8faad57-efbd-451f-8c9d-fa662c7f785d)
 
-### Exam 1 - score graph
-![output](https://user-images.githubusercontent.com/120204455/270424409-edc4acfc-30af-40ec-9c5e-eac35cb89e19.png)
+isnull() and sum()
 
-### Sigmoid function graph
-![output](https://user-images.githubusercontent.com/120204455/270424445-9bd4bfca-0274-4d02-97ea-88bc4274d31a.png)
+![326901992-4d2c5301-d36d-4643-9590-f7391c585a0f](https://github.com/23014226/Implementation-of-Decision-Tree-Classifier-Model-for-Predicting-Employee-Churn/assets/160568974/0ab8b8ad-ab54-4511-800d-e19d447fd29e)
 
-### X_train_grad value
-![output](https://user-images.githubusercontent.com/120204455/270424466-63a6de99-e789-4656-8200-b5f9cea9747b.png)
+data value counts()
 
-### Y_train_grad value
-![output](https://user-images.githubusercontent.com/120204455/270424645-ced57c1b-be0d-48a9-8d21-504778656c5f.png)
+![326902474-5e1787f9-b035-499e-a6f5-e19b38a558b2](https://github.com/23014226/Implementation-of-Decision-Tree-Classifier-Model-for-Predicting-Employee-Churn/assets/160568974/0608488d-6d4a-472d-8a09-c9ff65afbfc2)
 
-### Print res.x
-![output](https://user-images.githubusercontent.com/120204455/270424696-98c18a7b-e6c0-46db-bc53-05752a2fefbd.png)
+data.head() for salary
 
-### Decision boundary - graph for exam score
-![output](https://user-images.githubusercontent.com/120204455/270424710-d0a35897-b5a6-42a3-a856-00ea5086697f.png)
+![326903210-498dd35b-d410-4813-a5c1-cd2e1816559a](https://github.com/23014226/Implementation-of-Decision-Tree-Classifier-Model-for-Predicting-Employee-Churn/assets/160568974/4a736518-f57c-4132-8637-9a67f9085a9a)
 
-### Proability value
-![output](https://user-images.githubusercontent.com/120204455/270424744-ccfd7a31-69c4-41ab-bac5-c019aa989b86.png)
+x.head()
 
-### Prediction value of mean
-![output](https://user-images.githubusercontent.com/120204455/270424764-1d6e9ca6-3ecf-4029-828b-1993ca653c66.png)
+![326904764-7c3b2727-ffa1-495a-bfbf-ce80f71ee2fd](https://github.com/23014226/Implementation-of-Decision-Tree-Classifier-Model-for-Predicting-Employee-Churn/assets/160568974/a3474687-d733-4df6-b8c1-26e7ffeb5397)
+
+accuracy value()
+
+![326906003-d268f33e-fcf0-4b9f-a09a-0448a0a63856](https://github.com/23014226/Implementation-of-Decision-Tree-Classifier-Model-for-Predicting-Employee-Churn/assets/160568974/782af502-ccd7-4d78-bfb8-4fa31c9a4a84)
+
+data prediction
+
+![326906345-3cbc7e0a-2879-4cb9-b634-c67fb6b9d260](https://github.com/23014226/Implementation-of-Decision-Tree-Classifier-Model-for-Predicting-Employee-Churn/assets/160568974/526a3a50-3b87-4247-a829-30d1b2e4c85a)
 
 ## Result:
-Thus the program to implement the the Logistic Regression Using Gradient Descent is written and verified using python programming.
 
+Thus the program to implement the  Decision Tree Classifier Model for Predicting Employee Churn is written and verified using python programming.
